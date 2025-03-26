@@ -1,0 +1,124 @@
+<html>
+  <head>
+    <title>Connect 4</title>
+    <link rel="stylesheet" href="style.css" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <h1 id="main-title">Connect 4</h1>
+
+    <div id="board"></div>
+
+    <div id="rules">
+      <h2 id="rules-heading">The Rules</h2>
+
+      <ul id="rules-list">
+        <li>Challenge a friend to a thrilling match of Connect 4!</li>
+        <li>
+          Take turns dropping your red or yellow discs into the grid, aiming to
+          line up four in a row to claim victory.
+        </li>
+        <li>
+          Keep an eye on your opponent's strategy—if they're close to winning,
+          block their path with your disc!
+        </li>
+      </ul>
+    </div>
+
+    <script>
+      const board = document.getElementById("board");
+      let pieces = [];
+      let player = "red";
+
+      for (let i = 0; i < 7; i++) {
+        let row = [];
+        for (let j = 0; j < 7; j++) {
+          const box = document.createElement("div");
+          box.className = "box";
+          box.dataset.row = i;
+          box.dataset.col = j;
+          box.onclick = clicked;
+          board.appendChild(box);
+          row.push(box);
+        }
+        pieces.push(row);
+      }
+
+      function clicked(event) {
+        const coin = document.createElement("div");
+        coin.className = "coin " + player;
+        coin.dataset.col = event.target.dataset.col;
+
+        const col = event.target.dataset.col;
+        var isCoinPlaced = false;
+
+        for (let i = 6; i >= 0; i--) {
+          if (pieces[i][col].querySelector(".coin") == null) {
+            pieces[i][col].appendChild(coin);
+            isCoinPlaced = true;
+            break;
+          }
+        }
+
+        if (isCoinPlaced) {
+          if(checkWin()){
+            alert(player + ' wins!');
+          }
+          swapPlayer();
+        }
+      }
+
+      function swapPlayer() {
+        if (player == "red") {
+          player = "yellow";
+        } else {
+          player = "red";
+        }
+      }
+
+      moves = [
+        [-1, 0],
+        [0, 1],
+        [-1, 1],
+        [-1, -1],
+      ];
+      function checkWin() {
+        for (let k = 0; k < 4; k++) {
+          for (let i = 0; i < 7; i++) {
+            for (let j = 0; j < 7; j++) {
+              if(checkPeice(i,j,moves[k][0],moves[k][1])){
+                return true;
+              }
+            }
+          }
+        }
+        return false;
+      }
+
+      function checkPeice(row,col,change_row,change_col){
+        var steps = 0;
+        const to_check= pieces[row][col].querySelector('.'+player);
+        while(row>=0 && col>=0 && row<=6 && col<=6 && to_check!=null ){
+            if(pieces[row][col].querySelector('.'+player)!=null){
+              steps++;
+            } else{
+              break;
+            }
+            row+=change_row;
+            col+=change_col;
+        }
+        if(steps>=4){
+          return true;
+        }
+
+        return false;
+      }
+    </script>
+  </body>
+</html>
